@@ -6,7 +6,9 @@ provider "aws" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_name = "fsx-eks-${random_string.suffix.result}"
+  cluster_name = "eks-saas-${random_string.suffix.result}"
+  cluster2_name = "eks-saas-dr-${random_string.suffix.result}"
+  secret_name = "fsxn-password-secret-${random_string.suffix.result}"
 }
 
 resource "random_string" "suffix" {
@@ -18,7 +20,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.5.2"
 
-  name                 = "fsxn-eks-vpc"
+  name                 = "fsxn-saas-vpc1"
   cidr                 = var.vpc_cidr
   azs                  = data.aws_availability_zones.available.names
   private_subnets      = ["10.0.1.0/24", "10.0.2.0/24"]

@@ -27,7 +27,7 @@ module "eks" {
 
   eks_managed_node_groups = {
 
-    fsx_group = {
+    eks-saas-node-group = {
       min_size     = 2
       max_size     = 6
       desired_size = 2

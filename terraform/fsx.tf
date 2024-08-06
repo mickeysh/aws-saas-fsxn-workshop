@@ -12,16 +12,14 @@ resource "random_string" "fsx_password" {
 
 resource "aws_fsx_ontap_file_system" "eksfs" {
   storage_capacity    = 2048
-  subnet_ids          = module.vpc.private_subnets
-  deployment_type     = "MULTI_AZ_1"
+  subnet_ids          = [module.vpc.private_subnets[0]]
+  deployment_type     = "SINGLE_AZ_1"
   throughput_capacity = 512
   preferred_subnet_id = module.vpc.private_subnets[0]
   security_group_ids  = [aws_security_group.fsx_sg.id]
-  # fsx_admin_password  = var.fsx_admin_password
   fsx_admin_password = random_string.fsx_password.result
-  route_table_ids    = module.vpc.private_route_table_ids
   tags = {
-    Name = var.fsxame
+    Name = var.fsxname
   }
 }
 
@@ -40,13 +38,13 @@ resource "aws_security_group" "fsx_sg" {
 }
 
 resource "aws_security_group_rule" "fsx_sg_inbound" {
-  description       = "allow inbound traffic to eks"
+  description       = "allow inbound traffic to fsxn"
   from_port         = 0
   protocol          = "-1"
   to_port           = 0
   security_group_id = aws_security_group.fsx_sg.id
   type              = "ingress"
-  cidr_blocks       = [var.vpc_cidr]
+  cidr_blocks       = [var.vpc_cidr, var.vpc2_cidr]
 }
 
 resource "aws_security_group_rule" "fsx_sg_outbound" {
