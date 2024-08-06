@@ -40,8 +40,12 @@ module "iam_iam-role-for-service-accounts-eks" {
   allow_self_assume_role = true
 
   oidc_providers = {
-    eks = {
+    eks1 = {
       provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["${local.k8s_service_account_namespace}:${local.k8s_service_account_name}"]
+    }
+    eks2 = {
+      provider_arn               = module.eks2.oidc_provider_arn
       namespace_service_accounts = ["${local.k8s_service_account_namespace}:${local.k8s_service_account_name}"]
     }
   }

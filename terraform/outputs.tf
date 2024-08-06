@@ -37,3 +37,18 @@ output "zz_update_kubeconfig_command2" {
   value = format("%s %s %s %s", "aws eks update-kubeconfig --name", module.eks2.cluster_name, "--region", var.aws_region)
 }
 
+output "cluster_peer_destenation" {
+  value = "cluster peer create -address-family ipv4 -peer-addrs ${join(",",aws_fsx_ontap_file_system.eksfs.endpoints[0].intercluster[0].ip_addresses)}"
+}
+
+output "cluster_peer_source" {
+  value = "cluster peer create -address-family ipv4 -peer-addrs ${join(",",aws_fsx_ontap_file_system.eksfs2.endpoints[0].intercluster[0].ip_addresses)}"
+}
+
+output "svm_peer_destination" {
+  value = "vserver peer create -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-cluster ${aws_fsx_ontap_file_system.eksfs.id} -applications snapmirror -local-name ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name}-peer"
+}
+
+output "svm_peer_source" {
+  value = "vserver peer accept -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -local-name ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name}-peer"
+}

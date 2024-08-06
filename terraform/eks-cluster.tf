@@ -57,14 +57,10 @@ data "aws_eks_cluster_auth" "eks" {
   name = module.eks.cluster_name
 }
 
-resource "aws_eks_addon" "fsxn_csi_addon" {
+
+resource "aws_eks_addon" "snapshot_controller" {
   cluster_name = module.eks.cluster_name
-  addon_name   = "netapp_trident-operator"
-  addon_version = var.fsxn_addon_version
+  addon_name   = "snapshot-controller"
+  addon_version = "v8.0.0-eksbuild.1"
   resolve_conflicts_on_create = "OVERWRITE"
-
-
-  configuration_values = jsonencode({
-    cloudIdentity = "'eks.amazonaws.com/role-arn: ${module.iam_iam-role-for-service-accounts-eks.iam_role_arn}'"
-  })
 }

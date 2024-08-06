@@ -36,3 +36,9 @@ variable "fsxn_addon_version" {
   default = "v24.2.0-eksbuild.1"
   description = "fsx csi addon version"
 }
+
+variable "helm_config" {
+  description = "NetApp Trident Helm chart configuration"
+  type        = any
+  default     = {}
+}
