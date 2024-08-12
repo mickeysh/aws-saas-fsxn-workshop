@@ -1,0 +1,17 @@
+apiVersion: trident.netapp.io/v1
+kind: TridentActionSnapshotRestore
+metadata:
+  name: assets-share
+  namespace: tenant0
+spec:
+  pvcName: assets-share
+  volumeSnapshotName: assets-share
+---
+apiVersion: trident.netapp.io/v1
+kind: TridentActionSnapshotRestore
+metadata:
+  name: data-catalog-mysql-0
+  namespace: tenant0
+spec:
+  pvcName: data-catalog-mysql-0
+  volumeSnapshotName: data-catalog-mysql-0-snap

@@ -16,9 +16,15 @@ resource "helm_release" "trident" {
 
 }
 
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [helm_release.trident, helm_release.trident2]
+
+  create_duration = "30s"
+}
+
 resource "kubectl_manifest" "trident_backend_config_nas" {
   provider = kubectl.cluster1
-  depends_on = [helm_release.trident]
+  depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendnas.yaml.tpl",
     {
       fs_id      = aws_fsx_ontap_file_system.eksfs.id
@@ -30,7 +36,7 @@ resource "kubectl_manifest" "trident_backend_config_nas" {
 
 resource "kubectl_manifest" "trident_backend_config_san" {
   provider = kubectl.cluster1
-  depends_on = [helm_release.trident]
+  depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendsan.yaml.tpl",
     {
       fs_id      = aws_fsx_ontap_file_system.eksfs.id
@@ -72,7 +78,7 @@ resource "helm_release" "trident2" {
 
 resource "kubectl_manifest" "trident_backend_config2_nas" {
   provider = kubectl.cluster2
-  depends_on = [helm_release.trident2]
+  depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendnas.yaml.tpl",
     {
       fs_id      = aws_fsx_ontap_file_system.eksfs2.id
@@ -84,7 +90,7 @@ resource "kubectl_manifest" "trident_backend_config2_nas" {
 
 resource "kubectl_manifest" "trident_backend_config2_san" {
   provider = kubectl.cluster2
-  depends_on = [helm_release.trident2]
+  depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendsan.yaml.tpl",
     {
       fs_id      = aws_fsx_ontap_file_system.eksfs2.id
@@ -104,4 +110,19 @@ resource "kubectl_manifest" "trident_storage_class2_san" {
   provider = kubectl.cluster2
   depends_on = [kubectl_manifest.trident_backend_config2_san]
   yaml_body  = file("${path.module}/../manifests/storageclasssan.yaml")
+}
+
+resource "kubernetes_namespace_v1" "tenant0" {
+  provider = kubectl.cluster1
+  metadata {
+    name = "tenant0"
+  }
+  
+}
+
+resource "kubectl_manifest" "sample_app_tenant0" {
+  provider = kubectl.cluster1
+  namespace = "tenant0"
+  depends_on = [kubectl_manifest.trident_backend_config_san, kubectl_manifest.trident_backend_config_nas,kubernetes_namespace_v1.tenant0]
+  yaml_body  = file("${path.module}/../manifests/sample.yaml")
 }

@@ -3,8 +3,15 @@ provider "aws" {
   region = var.aws_region
 }
 
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  state = "available"
 
+  filter {
+    name   = "group-name"
+    values = [var.aws_region]
+  }
+}
+ 
 locals {
   cluster_name = "eks-saas-${random_string.suffix.result}"
   cluster2_name = "eks-saas-dr-${random_string.suffix.result}"

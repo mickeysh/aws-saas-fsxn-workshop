@@ -1,0 +1,17 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: data-catalog-mysql-0-snap
+spec:
+  volumeSnapshotClassName: fsx-snapclass
+  source:
+    persistentVolumeClaimName: data-catalog-mysql-0
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: assets-share-snap
+spec:
+  volumeSnapshotClassName: fsx-snapclass
+  source:
+    persistentVolumeClaimName: assets-share

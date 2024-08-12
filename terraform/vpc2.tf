@@ -31,12 +31,21 @@ module "vpc2" {
 resource "aws_vpc_peering_connection" "vpc_peer" {
   peer_vpc_id   = module.vpc2.vpc_id
   vpc_id        = module.vpc.vpc_id
-  peer_region   = var.aws_region
   auto_accept   = true
     tags = {
         Name = "fsxn-saas-vpc-peer"
     }
 }
+
+resource "aws_vpc_peering_connection_accepter" "vpc_peer" {
+  vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peer.id
+  auto_accept               = true
+
+  tags = {
+    Name = "fsxn-saas-vpc-peer"
+  }
+}
+
 
 resource "aws_route" "peer_vpc_private_route" {
   route_table_id            = module.vpc.private_route_table_ids[0]

@@ -46,9 +46,9 @@ output "cluster_peer_source" {
 }
 
 output "svm_peer_destination" {
-  value = "vserver peer create -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-cluster ${aws_fsx_ontap_file_system.eksfs.id} -applications snapmirror -local-name ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name}-peer"
+  value = "vserver peer create -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-cluster FsxId${trim(aws_fsx_ontap_file_system.eksfs.id,"fs-")} -applications snapmirror"
 }
 
 output "svm_peer_source" {
-  value = "vserver peer accept -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -local-name ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name}-peer"
+  value = "vserver peer accept -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name}"
 }

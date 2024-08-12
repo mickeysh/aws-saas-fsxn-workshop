@@ -1,8 +1,0 @@
-kind: TridentMirrorRelationship
-apiVersion: trident.netapp.io/v1
-metadata:
-  name: csi-nas
-spec:
-  state: promoted
-  volumeMappings:
-  - localPVCName: csi-nas

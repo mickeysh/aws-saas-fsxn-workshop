@@ -1,0 +1,39 @@
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: assets-share
+spec:
+  state: established
+  volumeMappings:
+  - localPVCName: assets-share
+    remoteVolumeHandle: "<volumeHandle>"
+---
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: data-catalog-mysql-0
+spec:
+  state: established
+  volumeMappings:
+  - localPVCName: data-catalog-mysql-0
+    remoteVolumeHandle: "<volumeHandle>"
+---
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: data-orders-mysql-0
+spec:
+  state: established
+  volumeMappings:
+  - localPVCName: data-orders-mysql-0
+    remoteVolumeHandle: "<volumeHandle>"
+---
+kind: TridentMirrorRelationship
+apiVersion: trident.netapp.io/v1
+metadata:
+  name: data-orders-rabbitmq-0
+spec:
+  state: established
+  volumeMappings:
+  - localPVCName: data-orders-rabbitmq-0
+    remoteVolumeHandle: "<volumeHandle>"
