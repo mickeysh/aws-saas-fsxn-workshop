@@ -19,6 +19,14 @@ output "fsx-svmdr-name" {
   value = aws_fsx_ontap_storage_virtual_machine.ekssvm2.name
 }
 
+output "fsx-management-ip" {
+  value = aws_fsx_ontap_file_system.eksfs.endpoints[0].management[0].ip_addresses
+}
+
+output "fsx-dr-management-ip" {
+  value = aws_fsx_ontap_file_system.eksfs2.endpoints[0].management[0].ip_addresses
+}
+
 output "secret_arn" {
   value = aws_secretsmanager_secret.fsxn_password_secret.arn
 }

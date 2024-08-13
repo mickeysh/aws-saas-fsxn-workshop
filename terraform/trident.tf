@@ -113,16 +113,21 @@ resource "kubectl_manifest" "trident_storage_class2_san" {
 }
 
 resource "kubernetes_namespace_v1" "tenant0" {
-  provider = kubectl.cluster1
+  provider = kubernetes.cluster1
   metadata {
-    name = "tenant0"
+    name = "tenant1"
   }
   
 }
 
+data "kubectl_path_documents" "sample_app_tenant0" {
+    pattern = "../manifests/sample.yaml"
+}
+
 resource "kubectl_manifest" "sample_app_tenant0" {
   provider = kubectl.cluster1
-  namespace = "tenant0"
-  depends_on = [kubectl_manifest.trident_backend_config_san, kubectl_manifest.trident_backend_config_nas,kubernetes_namespace_v1.tenant0]
-  yaml_body  = file("${path.module}/../manifests/sample.yaml")
+  override_namespace = "tenant1"
+  depends_on = [kubectl_manifest.trident_storage_class_san, kubectl_manifest.trident_storage_class_nas,kubernetes_namespace_v1.tenant0]
+  for_each  = toset(data.kubectl_path_documents.sample_app_tenant0.documents)
+  yaml_body  = each.value
 }
