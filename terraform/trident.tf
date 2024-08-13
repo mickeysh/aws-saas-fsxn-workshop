@@ -115,7 +115,7 @@ resource "kubectl_manifest" "trident_storage_class2_san" {
 resource "kubernetes_namespace_v1" "tenant0" {
   provider = kubernetes.cluster1
   metadata {
-    name = "tenant1"
+    name = "tenant0"
   }
   
 }
@@ -126,7 +126,7 @@ data "kubectl_path_documents" "sample_app_tenant0" {
 
 resource "kubectl_manifest" "sample_app_tenant0" {
   provider = kubectl.cluster1
-  override_namespace = "tenant1"
+  override_namespace = "tenant0"
   depends_on = [kubectl_manifest.trident_storage_class_san, kubectl_manifest.trident_storage_class_nas,kubernetes_namespace_v1.tenant0]
   for_each  = toset(data.kubectl_path_documents.sample_app_tenant0.documents)
   yaml_body  = each.value
