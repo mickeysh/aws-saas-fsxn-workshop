@@ -6,6 +6,5 @@ provisioner: csi.trident.netapp.io
 parameters:
   backendType: "ontap-nas"
   fsType: "ext4"
-  trident.netapp.io/replication: "true"
 allowVolumeExpansion: True
 reclaimPolicy: Delete

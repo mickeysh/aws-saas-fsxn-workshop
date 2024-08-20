@@ -7,6 +7,7 @@ module "eks2" {
 
   enable_irsa = true
   cluster_endpoint_public_access = true
+  dataplane_wait_duration = "2m"
 
   authentication_mode = "API"
   enable_cluster_creator_admin_permissions = true 
