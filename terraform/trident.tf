@@ -14,6 +14,7 @@ resource "helm_release" "trident" {
     value = "'eks.amazonaws.com/role-arn: ${module.iam_iam-role-for-service-accounts-eks.iam_role_arn}'"
   }
 
+  depends_on = [ module.eks ]
 }
 
 resource "time_sleep" "wait_30_seconds" {
@@ -74,6 +75,7 @@ resource "helm_release" "trident2" {
     value = "'eks.amazonaws.com/role-arn: ${module.iam_iam-role-for-service-accounts-eks.iam_role_arn}'"
   }
 
+  depends_on = [ module.eks2 ]
 }
 
 resource "kubectl_manifest" "trident_backend_config2_nas" {
@@ -118,6 +120,7 @@ resource "kubernetes_namespace_v1" "tenant0" {
     name = "tenant0"
   }
   
+  depends_on = [ module.eks ]
 }
 
 data "kubectl_path_documents" "sample_app_tenant0" {
