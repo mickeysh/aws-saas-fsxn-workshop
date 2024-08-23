@@ -12,12 +12,6 @@ module "eks" {
   authentication_mode = "API"
   enable_cluster_creator_admin_permissions = true 
 
-  tags = {
-    Environment = "training"
-    GithubRepo  = "terraform-aws-eks"
-    GithubOrg   = "terraform-aws-modules"
-  }
-
   vpc_id = module.vpc.vpc_id
 
   eks_managed_node_group_defaults = {
@@ -49,15 +43,6 @@ data "cloudinit_config" "cloudinit" {
     content      = file("scripts/iscsi.sh")
   }
 }
-
-data "aws_eks_cluster" "eks" {
-  name = module.eks.cluster_name
-}
-
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks.cluster_name
-}
-
 
 resource "aws_eks_addon" "snapshot_controller" {
   cluster_name = module.eks.cluster_name

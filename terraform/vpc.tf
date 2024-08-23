@@ -1,6 +1,10 @@
 
 provider "aws" {
   region = var.aws_region
+
+  default_tags {
+    tags = local.tags
+  }
 }
 
 data "aws_availability_zones" "available" {
@@ -16,6 +20,11 @@ locals {
   cluster_name = "eks-saas-${random_string.suffix.result}"
   cluster2_name = "eks-saas-dr-${random_string.suffix.result}"
   secret_name = "fsxn-password-secret-${random_string.suffix.result}"
+
+  tags = {
+    Environment = "fsxn-saas-workshop"
+    Owner       = "aws"
+  }
 }
 
 resource "random_string" "suffix" {

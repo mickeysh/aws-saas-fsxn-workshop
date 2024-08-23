@@ -3,43 +3,73 @@
 # # To learn how to schedule deployments and services using the provider, go here: https://learn.hashicorp.com/terraform/kubernetes/deploy-nginx-kubernetes
 
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.aws_region]
+  }
   alias = "cluster1"
 }
 
 provider "helm" {
   kubernetes {
-    host                   = data.aws_eks_cluster.eks.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.eks.token
+    host                   = module.eks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      # This requires the awscli to be installed locally where Terraform is executed
+      args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.aws_region]
+    }
   }
   alias = "cluster1"
 }
 
 provider "kubectl" {
   apply_retry_count = 15
-  
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
+
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.aws_region]
+  }
   load_config_file       = false
   alias = "cluster1"
 }
 
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.eks2.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks2.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks2.token
+  host                   = module.eks2.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks2.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args = ["eks", "get-token", "--cluster-name", module.eks2.cluster_name, "--region", var.aws_region]
+  }
   alias = "cluster2"
 }
 
 provider "helm" {
   kubernetes {
-    host                   = data.aws_eks_cluster.eks2.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks2.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.eks2.token
+    host                   = module.eks2.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks2.cluster_certificate_authority_data)
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      # This requires the awscli to be installed locally where Terraform is executed
+      args = ["eks", "get-token", "--cluster-name", module.eks2.cluster_name, "--region", var.aws_region]
+    }
   }
   alias = "cluster2"
 }
@@ -47,9 +77,15 @@ provider "helm" {
 provider "kubectl" {
   apply_retry_count = 15
 
-  host                   = data.aws_eks_cluster.eks2.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks2.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks2.token
+  host                   = module.eks2.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks2.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args = ["eks", "get-token", "--cluster-name", module.eks2.cluster_name, "--region", var.aws_region]
+  }
   load_config_file       = false
   alias = "cluster2"
 }
