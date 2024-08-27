@@ -1,3 +1,4 @@
+
 resource "helm_release" "trident" {
   provider = helm.cluster1
   name             = "trident-operator"
@@ -21,6 +22,7 @@ resource "time_sleep" "wait_30_seconds" {
   depends_on = [helm_release.trident, helm_release.trident2]
 
   create_duration = "30s"
+  destroy_duration = "60s"
 }
 
 resource "kubectl_manifest" "trident_backend_config_nas" {

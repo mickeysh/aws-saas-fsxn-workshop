@@ -27,6 +27,18 @@ module "eks" {
       max_size     = 6
       desired_size = 2
 
+      subnet_ids = [module.vpc.private_subnets[0]]
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data = data.cloudinit_config.cloudinit.rendered
+    }
+
+    eks-saas-node-group2 = {
+      min_size     = 2
+      max_size     = 6
+      desired_size = 2
+
+      subnet_ids = [module.vpc.private_subnets[1]]
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = data.cloudinit_config.cloudinit.rendered

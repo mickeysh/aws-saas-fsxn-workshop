@@ -233,10 +233,9 @@ spec:
             - name: mysql
               containerPort: 3306
               protocol: TCP
-      # volumes:
-      #   - name: data
-      #     persistentVolumeClaim:
-      #       claimName: mysql-volume  
+      persistentVolumeClaimRetentionPolicy:
+          whenDeleted: Delete
+          whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -708,6 +707,9 @@ spec:
             - name: mysql
               containerPort: 3306
               protocol: TCP
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -716,7 +718,7 @@ spec:
         storageClassName: trident-csi-san
         resources:
           requests:
-            storage: 30Gi 
+            storage: 30Gi
 ---
 # Source: orders/templates/rabbitmq-statefulset.yaml
 apiVersion: apps/v1
@@ -758,6 +760,9 @@ spec:
           volumeMounts:
           - name: data
             mountPath: "/var/lib/rabbitmq/mnesia"
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
