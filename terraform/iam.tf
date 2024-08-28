@@ -1,6 +1,6 @@
 
 resource "aws_iam_policy" "fsxn-csi-policy" {
-  name        = "AmazonFSXNCSIDriverPolicy"
+  name        = "AmazonFSXNCSIDriverPolicy_${random_string.suffix.result}"
   description = "FSxN CSI Driver Policy"
 
 
@@ -36,7 +36,7 @@ module "iam_iam-role-for-service-accounts-eks" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.37.1"
 
-  role_name              = "AmazonEKS_FSXN_CSI_DriverRole"
+  role_name              = "AmazonEKS_FSXN_CSI_DriverRole_${random_string.suffix.result}"
   allow_self_assume_role = true
 
   oidc_providers = {

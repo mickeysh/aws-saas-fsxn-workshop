@@ -1125,6 +1125,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 spec:
   type: LoadBalancer
+  loadBalancerSourceRanges:
+  - "0.0.0.0/0"
   ports:
     - port: 80
       targetPort: http
