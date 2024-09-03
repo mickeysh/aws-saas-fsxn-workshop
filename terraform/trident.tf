@@ -136,3 +136,18 @@ resource "kubectl_manifest" "sample_app_tenant0" {
   for_each  = toset(data.kubectl_path_documents.sample_app_tenant0.documents)
   yaml_body  = each.value
 }
+
+data "http" "ip" {
+  url = "https://ifconfig.me/ip"
+}
+
+resource "kubectl_manifest" "sample_ap_svc_tenant0" {
+  provider = kubectl.cluster1
+  override_namespace = "tenant0"
+  depends_on = [kubectl_manifest.sample_app_tenant0]
+  yaml_body = templatefile("${path.module}/../manifests/svc.yaml.tpl",
+    {
+      loadBalancerSourceRanges      = "${data.http.ip.response_body}/32"
+    }
+  )
+}
