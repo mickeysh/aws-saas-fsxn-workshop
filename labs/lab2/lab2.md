@@ -6,6 +6,11 @@ Use NetApp Snapshots to recover an entire volume
 
 Task objective: Use NetApp Snapshots to recover a volume 
 
+**Step 0:**: Check product catalog in tenant0 sample application by logging into the web ui and selecting the product catalog. You should see 6 items available at the catalog.
+
+![step0-webui](images/lab2-step0.png)
+
+
 **Step 1:**: Create `VolumeSnapshotClass` for `tenant0`. Use [volume-snapshot-class.yaml](volume-snapshot-class.yaml) manifset to create a VolumeSnapshotClass:
 ```
 kubectl create -n tenant0 -f volume-snapshot-class.yaml
@@ -101,7 +106,7 @@ Bye
 ```
 3) Add new product image to the assets store:
 ```
-kubectl exec --stdin deployment/assets -- bash -c 'curl https://upload.wikimedia.org/wikipedia/commons/f/fc/Du200613.png -o /usr/share/nginx/html/assets/cuckoo.jpg'
+kubectl exec --stdin deployment/assets -n tenant0 -- bash -c 'curl https://upload.wikimedia.org/wikipedia/commons/f/fc/Du200613.png -o /usr/share/nginx/html/assets/cuckoo.jpg'
 ```
 Expected output:
 ```
@@ -119,6 +124,14 @@ smart_1.jpg
 smart_2.jpg
 wood_watch.jpg
 ```
+
+4) Log in to tenant0 web ui and check the store catalog. You should now see 7 items in the catalog. 
+
+![step0-webui](images/lab2-step4-0.png)
+
+5) Select the new item in the catalog and check it out:
+
+![step0-webui](images/lab2-step4-1.png)
 
 **Step 5:** Restore from Snapshot
 1) Scale down the number of active pods shutdown the assets service:
@@ -223,3 +236,6 @@ mysql> exit
 Bye
 ```
 
+4) Check product catalog in tenant0 sample application by logging into the web ui and selecting the product catalog. After the restore you should now see the original 6 items available at the catalog.
+
+![step0-webui](images/lab2-step6.png)
