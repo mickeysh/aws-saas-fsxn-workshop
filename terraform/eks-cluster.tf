@@ -26,6 +26,10 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
+      
+      labels = {
+        TenantName = "nodeGroupTenant0" 
+      }
 
       subnet_ids = [module.vpc.private_subnets[0]]
       enable_bootstrap_user_data = true
@@ -37,6 +41,10 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
+
+      labels = {
+        TenantName  = "nodeGroupTenant1"
+      }
 
       subnet_ids = [module.vpc.private_subnets[1]]
       enable_bootstrap_user_data = true

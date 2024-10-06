@@ -162,8 +162,8 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume
-      nodeSelector:      
-        TenantName: nodeGroupTenant0
+      nodeSelector:
+        eks.amazonaws.com/nodegroup: ${ng2_name}
       volumes:
         - name: tmp-volume
           emptyDir:
@@ -179,7 +179,7 @@ spec:
 #   resources:
 #     requests:
 #       storage: 30Gi
-#   storageClassName: trident-csi-san
+#   storageClassName: trident-csi-san-lab1
 ---
 # Source: catalog/templates/mysql-statefulset.yaml
 apiVersion: apps/v1
@@ -235,17 +235,14 @@ spec:
             - name: mysql
               containerPort: 3306
               protocol: TCP
-      persistentVolumeClaimRetentionPolicy:
-          whenDeleted: Delete
-          whenScaled: Retain
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: trident-csi-san
+        storageClassName: trident-csi-san-lab1
         resources:
           requests:
             storage: 30Gi 
@@ -401,7 +398,7 @@ spec:
             - mountPath: /tmp
               name: tmp-volume
       nodeSelector:
-         TenantName: nodeGroupTenant0
+       eks.amazonaws.com/nodegroup: ${ng2_name}
       volumes:
         - name: tmp-volume
           emptyDir:
@@ -441,7 +438,7 @@ spec:
               containerPort: 8000
               protocol: TCP
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
 
 ---
 # Source: orders/templates/serviceaccount.yaml
@@ -657,7 +654,7 @@ spec:
             - mountPath: /tmp
               name: tmp-volume
       nodeSelector:
-        TenantName: nodeGroupTenant0
+       eks.amazonaws.com/nodegroup: ${ng2_name}
       volumes:
         - name: tmp-volume
           emptyDir:
@@ -718,16 +715,13 @@ spec:
               containerPort: 3306
               protocol: TCP
       nodeSelector:
-        TenantName: nodeGroupTenant0
-      persistentVolumeClaimRetentionPolicy:
-        whenDeleted: Delete
-        whenScaled: Retain
+        eks.amazonaws.com/nodegroup: ${ng2_name}
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: trident-csi-san
+        storageClassName: trident-csi-san-lab1
         resources:
           requests:
             storage: 30Gi
@@ -772,17 +766,14 @@ spec:
           volumeMounts:
           - name: data
             mountPath: "/var/lib/rabbitmq/mnesia"
-      persistentVolumeClaimRetentionPolicy:
-        whenDeleted: Delete
-        whenScaled: Retain
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: trident-csi-san
+        storageClassName: trident-csi-san-lab1
         resources:
           requests:
             storage: 30Gi 
@@ -931,7 +922,7 @@ spec:
             - mountPath: /tmp
               name: tmp-volume
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
       volumes:
         - name: tmp-volume
           emptyDir:
@@ -971,7 +962,7 @@ spec:
               containerPort: 6379
               protocol: TCP
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
 
 ---
 # Source: assets/templates/serviceaccount.yaml
@@ -1027,7 +1018,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: trident-csi-nas
+  storageClassName: trident-csi-nas-lab1
   resources:
     requests:
       storage: 5Gi
@@ -1099,7 +1090,7 @@ spec:
             - mountPath: /tmp
               name: fsxnvolume
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
       volumes:
         - name: fsxnvolume
           persistentVolumeClaim:
@@ -1241,7 +1232,7 @@ spec:
             - mountPath: /tmp
               name: tmp-volume
       nodeSelector:
-        TenantName: nodeGroupTenant0
+        eks.amazonaws.com/nodegroup: ${ng2_name}
       volumes:
         - name: tmp-volume
           emptyDir:
