@@ -17,7 +17,7 @@ metadata:
   name: trident-csi-san-lab1
 provisioner: csi.trident.netapp.io
 parameters:
-  backendType: "ontap-nas"
+  backendType: "ontap-san"
   fsType: "ext4"
   selector: "department=lab1"
 allowVolumeExpansion: True
