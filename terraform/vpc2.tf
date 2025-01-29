@@ -1,6 +1,6 @@
 module "vpc2" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.5.2"
+  version = "5.18.1"
 
   name                 = "fsxn-saas-vpc2"
   cidr                 = var.vpc2_cidr

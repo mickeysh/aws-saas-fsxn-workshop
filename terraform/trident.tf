@@ -6,7 +6,7 @@ resource "helm_release" "trident" {
   create_namespace = true
   description      = null
   chart            = "trident-operator"
-  version          = "100.2406.1"
+  version          = "100.2410.0"
   repository       = "https://netapp.github.io/trident-helm-chart"
   values           = [file("${path.module}/values.yaml")]
 
