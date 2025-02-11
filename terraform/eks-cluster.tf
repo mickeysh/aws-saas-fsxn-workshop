@@ -32,9 +32,6 @@ module "eks" {
       }
 
       subnet_ids                 = [module.vpc.private_subnets[0]]
-      enable_bootstrap_user_data = true
-
-      pre_bootstrap_user_data = data.cloudinit_config.cloudinit.rendered
     }
 
     eks-saas-node-group2 = {
