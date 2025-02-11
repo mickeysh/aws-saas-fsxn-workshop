@@ -46,15 +46,15 @@ output "zz_update_kubeconfig_command2" {
 }
 
 output "cluster_peer_destenation" {
-  value = "cluster peer create -address-family ipv4 -peer-addrs ${join(",",aws_fsx_ontap_file_system.eksfs.endpoints[0].intercluster[0].ip_addresses)}"
+  value = "cluster peer create -address-family ipv4 -peer-addrs ${join(",", aws_fsx_ontap_file_system.eksfs.endpoints[0].intercluster[0].ip_addresses)}"
 }
 
 output "cluster_peer_source" {
-  value = "cluster peer create -address-family ipv4 -peer-addrs ${join(",",aws_fsx_ontap_file_system.eksfs2.endpoints[0].intercluster[0].ip_addresses)}"
+  value = "cluster peer create -address-family ipv4 -peer-addrs ${join(",", aws_fsx_ontap_file_system.eksfs2.endpoints[0].intercluster[0].ip_addresses)}"
 }
 
 output "svm_peer_destination" {
-  value = "vserver peer create -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-cluster FsxId${trim(aws_fsx_ontap_file_system.eksfs.id,"fs-")} -applications snapmirror"
+  value = "vserver peer create -vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm2.name} -peer-vserver ${aws_fsx_ontap_storage_virtual_machine.ekssvm.name} -peer-cluster FsxId${trim(aws_fsx_ontap_file_system.eksfs.id, "fs-")} -applications snapmirror"
 }
 
 output "svm_peer_source" {

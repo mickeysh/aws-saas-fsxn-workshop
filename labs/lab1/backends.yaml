@@ -1,0 +1,48 @@
+---
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-ontap-nas-lab1
+  namespace: trident
+  labels:
+    nodegroup: nodeGroup2
+    lab: lab1
+spec:
+  version: 1
+  storageDriverName: ontap-nas
+  backendName: tbc-ontap-nas-lab1
+  svm: ekssvm		 ### used by lab1setup.tf to create yaml file for lab1  
+  aws:
+   fsxFilesystemID: fs-07348ff1369e63a13 	 ### used by lab1setup.tf to create yaml file for lab1 
+  credentials:
+    name: arn:aws:secretsmanager:us-east-1:139763910815:secret:fsxn-password-secret-lNoKPO6n-VMfesB  	 ### used by lab1setup.tf to create yaml file for lab1  
+    type: awsarn
+  autoExportCIDRs:
+  - 10.0.2.0/24
+  autoExportPolicy: true
+  storage:
+  - labels:
+      department: lab1
+---
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-ontap-san-lab1
+  namespace: trident
+  labels:
+    nodegroup: nodeGroup2
+    lab: lab1
+spec:
+  version: 1
+  storageDriverName: ontap-san
+  backendName: tbc-ontap-san-lab1
+  svm: ekssvm               ### used by lab1setup.tf to create yaml file for lab1 
+  aws:
+    fsxFilesystemID: fs-07348ff1369e63a13  ### used by lab1setup.tf to create yaml file for lab1  
+  credentials:
+    name: arn:aws:secretsmanager:us-east-1:139763910815:secret:fsxn-password-secret-lNoKPO6n-VMfesB        ### used by lab1setup.tf to create yaml file for lab1 
+    type: awsarn
+  storage:
+  - labels:
+      department: lab1
+

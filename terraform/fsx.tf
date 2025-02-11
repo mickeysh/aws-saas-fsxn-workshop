@@ -5,7 +5,7 @@ resource "random_string" "fsx_password" {
   min_numeric      = 1
   min_special      = 1
   min_upper        = 1
-  numeric           = true
+  numeric          = true
   special          = true
   override_special = "!"
 }
@@ -17,15 +17,15 @@ resource "aws_fsx_ontap_file_system" "eksfs" {
   throughput_capacity = 512
   preferred_subnet_id = module.vpc.private_subnets[0]
   security_group_ids  = [aws_security_group.fsx_sg.id]
-  fsx_admin_password = random_string.fsx_password.result
+  fsx_admin_password  = random_string.fsx_password.result
   tags = {
     Name = var.fsxname
   }
 }
 
 resource "aws_fsx_ontap_storage_virtual_machine" "ekssvm" {
-  file_system_id = aws_fsx_ontap_file_system.eksfs.id
-  name           = "ekssvm"
+  file_system_id     = aws_fsx_ontap_file_system.eksfs.id
+  name               = "ekssvm"
   svm_admin_password = random_string.fsx_password.result
 }
 

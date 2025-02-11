@@ -1,6 +1,6 @@
 
 resource "helm_release" "trident" {
-  provider = helm.cluster1
+  provider         = helm.cluster1
   name             = "trident-operator"
   namespace        = "trident"
   create_namespace = true
@@ -11,22 +11,22 @@ resource "helm_release" "trident" {
   values           = [file("${path.module}/values.yaml")]
 
   set {
-    name = "cloudIdentity"
-    value = "'eks.amazonaws.com/role-arn: ${module.iam_iam-role-for-service-accounts-eks.iam_role_arn}'"
+    name  = "nodePrep"
+    value = "{iscsi}"
   }
 
-  depends_on = [ module.eks ]
+  depends_on = [module.eks]
 }
 
 resource "time_sleep" "wait_30_seconds" {
   depends_on = [helm_release.trident, helm_release.trident2]
 
-  create_duration = "30s"
+  create_duration  = "30s"
   destroy_duration = "60s"
 }
 
 resource "kubectl_manifest" "trident_backend_config_nas" {
-  provider = kubectl.cluster1
+  provider   = kubectl.cluster1
   depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendnas.yaml.tpl",
     {
@@ -38,7 +38,7 @@ resource "kubectl_manifest" "trident_backend_config_nas" {
 }
 
 resource "kubectl_manifest" "trident_backend_config_san" {
-  provider = kubectl.cluster1
+  provider   = kubectl.cluster1
   depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendsan.yaml.tpl",
     {
@@ -50,19 +50,19 @@ resource "kubectl_manifest" "trident_backend_config_san" {
 }
 
 resource "kubectl_manifest" "trident_storage_class_nas" {
-  provider = kubectl.cluster1
+  provider   = kubectl.cluster1
   depends_on = [kubectl_manifest.trident_backend_config_nas]
   yaml_body  = file("${path.module}/../manifests/storageclass.yaml")
 }
 
 resource "kubectl_manifest" "trident_storage_class_san" {
-  provider = kubectl.cluster1
+  provider   = kubectl.cluster1
   depends_on = [kubectl_manifest.trident_backend_config_san]
   yaml_body  = file("${path.module}/../manifests/storageclasssan.yaml")
 }
 
 resource "helm_release" "trident2" {
-  provider = helm.cluster2
+  provider         = helm.cluster2
   name             = "trident-operator"
   namespace        = "trident"
   create_namespace = true
@@ -73,15 +73,15 @@ resource "helm_release" "trident2" {
   values           = [file("${path.module}/values.yaml")]
 
   set {
-    name = "cloudIdentity"
-    value = "'eks.amazonaws.com/role-arn: ${module.iam_iam-role-for-service-accounts-eks.iam_role_arn}'"
+    name  = "nodePrep"
+    value = "{iscsi}"
   }
 
-  depends_on = [ module.eks2 ]
+  depends_on = [module.eks2]
 }
 
 resource "kubectl_manifest" "trident_backend_config2_nas" {
-  provider = kubectl.cluster2
+  provider   = kubectl.cluster2
   depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendnas.yaml.tpl",
     {
@@ -93,7 +93,7 @@ resource "kubectl_manifest" "trident_backend_config2_nas" {
 }
 
 resource "kubectl_manifest" "trident_backend_config2_san" {
-  provider = kubectl.cluster2
+  provider   = kubectl.cluster2
   depends_on = [time_sleep.wait_30_seconds]
   yaml_body = templatefile("${path.module}/../manifests/backendsan.yaml.tpl",
     {
@@ -105,13 +105,13 @@ resource "kubectl_manifest" "trident_backend_config2_san" {
 }
 
 resource "kubectl_manifest" "trident_storage_class2_nas" {
-  provider = kubectl.cluster2
+  provider   = kubectl.cluster2
   depends_on = [kubectl_manifest.trident_backend_config2_nas]
   yaml_body  = file("${path.module}/../manifests/storageclass.yaml")
 }
 
 resource "kubectl_manifest" "trident_storage_class2_san" {
-  provider = kubectl.cluster2
+  provider   = kubectl.cluster2
   depends_on = [kubectl_manifest.trident_backend_config2_san]
   yaml_body  = file("${path.module}/../manifests/storageclasssan.yaml")
 }
@@ -121,33 +121,33 @@ resource "kubernetes_namespace_v1" "tenant0" {
   metadata {
     name = "tenant0"
   }
-  
-  depends_on = [ module.eks ]
+
+  depends_on = [module.eks]
 }
 
 data "kubectl_path_documents" "sample_app_tenant0" {
-    pattern = "../manifests/sample.yaml"
+  pattern = "../manifests/sample.yaml"
 }
 
 resource "kubectl_manifest" "sample_app_tenant0" {
-  provider = kubectl.cluster1
+  provider           = kubectl.cluster1
   override_namespace = "tenant0"
-  depends_on = [kubectl_manifest.trident_storage_class_san, kubectl_manifest.trident_storage_class_nas,kubernetes_namespace_v1.tenant0]
-  for_each  = toset(data.kubectl_path_documents.sample_app_tenant0.documents)
-  yaml_body  = each.value
+  depends_on         = [kubectl_manifest.trident_storage_class_san, kubectl_manifest.trident_storage_class_nas, kubernetes_namespace_v1.tenant0]
+  for_each           = toset(data.kubectl_path_documents.sample_app_tenant0.documents)
+  yaml_body          = each.value
 }
 
 data "http" "ip" {
-  url = "https://ifconfig.me/ip"
+  url = "https://api.ipify.org"
 }
 
 resource "kubectl_manifest" "sample_ap_svc_tenant0" {
-  provider = kubectl.cluster1
+  provider           = kubectl.cluster1
   override_namespace = "tenant0"
-  depends_on = [kubectl_manifest.sample_app_tenant0]
+  depends_on         = [kubectl_manifest.sample_app_tenant0]
   yaml_body = templatefile("${path.module}/../manifests/svc.yaml.tpl",
     {
-      loadBalancerSourceRanges      = "${data.http.ip.response_body}/32"
+      loadBalancerSourceRanges = "${data.http.ip.response_body}/32"
     }
   )
 }

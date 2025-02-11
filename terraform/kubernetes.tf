@@ -42,8 +42,8 @@ provider "kubectl" {
     # This requires the awscli to be installed locally where Terraform is executed
     args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.aws_region]
   }
-  load_config_file       = false
-  alias = "cluster1"
+  load_config_file = false
+  alias            = "cluster1"
 }
 
 provider "kubernetes" {
@@ -86,6 +86,6 @@ provider "kubectl" {
     # This requires the awscli to be installed locally where Terraform is executed
     args = ["eks", "get-token", "--cluster-name", module.eks2.cluster_name, "--region", var.aws_region]
   }
-  load_config_file       = false
-  alias = "cluster2"
+  load_config_file = false
+  alias            = "cluster2"
 }

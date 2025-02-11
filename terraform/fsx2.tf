@@ -5,15 +5,15 @@ resource "aws_fsx_ontap_file_system" "eksfs2" {
   throughput_capacity = 512
   preferred_subnet_id = module.vpc2.private_subnets[0]
   security_group_ids  = [aws_security_group.fsx_sg2.id]
-  fsx_admin_password = random_string.fsx_password.result
+  fsx_admin_password  = random_string.fsx_password.result
   tags = {
     Name = var.fsxnamedr
   }
 }
 
 resource "aws_fsx_ontap_storage_virtual_machine" "ekssvm2" {
-  file_system_id = aws_fsx_ontap_file_system.eksfs2.id
-  name           = "ekssvmdr"
+  file_system_id     = aws_fsx_ontap_file_system.eksfs2.id
+  name               = "ekssvmdr"
   svm_admin_password = random_string.fsx_password.result
 }
 

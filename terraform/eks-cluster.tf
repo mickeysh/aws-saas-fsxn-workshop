@@ -5,12 +5,12 @@ module "eks" {
   cluster_version = var.kubernetes_version
   subnet_ids      = module.vpc.private_subnets
 
-  enable_irsa = true
+  enable_irsa                    = true
   cluster_endpoint_public_access = true
-  dataplane_wait_duration = "2m"
+  dataplane_wait_duration        = "2m"
 
-  authentication_mode = "API"
-  enable_cluster_creator_admin_permissions = true 
+  authentication_mode                      = "API"
+  enable_cluster_creator_admin_permissions = true
 
   vpc_id = module.vpc.vpc_id
 
@@ -26,12 +26,12 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      
+
       labels = {
-        TenantName = "nodeGroupTenant0" 
+        TenantName = "nodeGroupTenant0"
       }
 
-      subnet_ids = [module.vpc.private_subnets[0]]
+      subnet_ids                 = [module.vpc.private_subnets[0]]
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = data.cloudinit_config.cloudinit.rendered
@@ -43,30 +43,24 @@ module "eks" {
       desired_size = 2
 
       labels = {
-        TenantName  = "nodeGroupTenant1"
+        TenantName = "nodeGroupTenant1"
       }
 
       subnet_ids = [module.vpc.private_subnets[1]]
-      enable_bootstrap_user_data = true
-
-      pre_bootstrap_user_data = data.cloudinit_config.cloudinit.rendered
     }
   }
 }
 
-data "cloudinit_config" "cloudinit" {
-  gzip          = false
-  base64_encode = false
-
-  part {
-    content_type = "text/x-shellscript"
-    content      = file("scripts/iscsi.sh")
-  }
+resource "aws_eks_addon" "snapshot_controller" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "snapshot-controller"
+  addon_version               = "v8.0.0-eksbuild.1"
+  resolve_conflicts_on_create = "OVERWRITE"
 }
 
-resource "aws_eks_addon" "snapshot_controller" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "snapshot-controller"
-  addon_version = "v8.0.0-eksbuild.1"
-  resolve_conflicts_on_create = "OVERWRITE"
+resource "aws_eks_addon" "eks-pod-identity-agent" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "eks-pod-identity-agent"
+  addon_version               = "v1.3.4-eksbuild.1"
+  resolve_conflicts_on_update = "OVERWRITE"
 }

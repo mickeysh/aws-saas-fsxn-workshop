@@ -13,7 +13,7 @@ variable "vpc2_cidr" {
   description = "default CIDR range of the VPC"
 }
 variable "aws_region" {
-  default = "us-east-1"
+  default     = "us-east-1"
   description = "aws region"
 }
 
@@ -33,7 +33,7 @@ variable "fsx_admin_password" {
 }
 
 variable "fsxn_addon_version" {
-  default = "v24.2.0-eksbuild.1"
+  default     = "v24.2.0-eksbuild.1"
   description = "fsx csi addon version"
 }
 

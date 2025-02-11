@@ -128,7 +128,7 @@ enableForceDetach: false
 excludePodSecurityPolicy: false
 
 # cloudProvider indicates which cloud platform Trident is running on.
-cloudProvider: "aws"
+cloudProvider: ""
 
 # cloudIdentity indicates the identity that needs to be set on service account.
 cloudIdentity: ""

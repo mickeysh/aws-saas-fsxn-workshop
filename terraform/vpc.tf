@@ -11,15 +11,17 @@ data "aws_availability_zones" "available" {
   state = "available"
 
   filter {
-    name   = "group-name"
-    values = [var.aws_region]
+    name = "opt-in-status"
+    values = [
+      "opt-in-not-required"
+    ]
   }
 }
- 
+
 locals {
-  cluster_name = "eks-saas-${random_string.suffix.result}"
+  cluster_name  = "eks-saas-${random_string.suffix.result}"
   cluster2_name = "eks-saas-dr-${random_string.suffix.result}"
-  secret_name = "fsxn-password-secret-${random_string.suffix.result}"
+  secret_name   = "fsxn-password-secret-${random_string.suffix.result}"
 
   tags = {
     Environment = "fsxn-saas-workshop"
