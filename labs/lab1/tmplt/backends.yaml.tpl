@@ -11,11 +11,11 @@ spec:
   version: 1
   storageDriverName: ontap-nas
   backendName: tbc-ontap-nas-lab1
-  svm: ${fs_svm}		 ### used by lab1setup.tf to create yaml file for lab1  
+  svm: ${fs_svm}		 
   aws:
-   fsxFilesystemID: ${fs_id} 	 ### used by lab1setup.tf to create yaml file for lab1 
+   fsxFilesystemID: ${fs_id} 	  
   credentials:
-    name: ${secret_arn}  	 ### used by lab1setup.tf to create yaml file for lab1  
+    name: ${secret_arn}  	  
     type: awsarn
   autoExportCIDRs:
   - 10.0.2.0/24
@@ -36,11 +36,11 @@ spec:
   version: 1
   storageDriverName: ontap-san
   backendName: tbc-ontap-san-lab1
-  svm: ${fs_svm}               ### used by lab1setup.tf to create yaml file for lab1 
+  svm: ${fs_svm}                
   aws:
-    fsxFilesystemID: ${fs_id}  ### used by lab1setup.tf to create yaml file for lab1  
+    fsxFilesystemID: ${fs_id}    
   credentials:
-    name: ${secret_arn}        ### used by lab1setup.tf to create yaml file for lab1 
+    name: ${secret_arn}        
     type: awsarn
   storage:
   - labels:

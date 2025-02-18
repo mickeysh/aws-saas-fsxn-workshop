@@ -235,11 +235,11 @@ spec:
             - name: mysql
               containerPort: 3306
               protocol: TCP
-      persistentVolumeClaimRetentionPolicy:
-          whenDeleted: Delete
-          whenScaled: Retain
       nodeSelector:
         TenantName: nodeGroupTenant0
+  persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Delete
+      whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -719,9 +719,9 @@ spec:
               protocol: TCP
       nodeSelector:
         TenantName: nodeGroupTenant0
-      persistentVolumeClaimRetentionPolicy:
-        whenDeleted: Delete
-        whenScaled: Retain
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -772,11 +772,11 @@ spec:
           volumeMounts:
           - name: data
             mountPath: "/var/lib/rabbitmq/mnesia"
-      persistentVolumeClaimRetentionPolicy:
-        whenDeleted: Delete
-        whenScaled: Retain
       nodeSelector:
         TenantName: nodeGroupTenant0
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data

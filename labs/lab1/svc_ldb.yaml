@@ -17,7 +17,7 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerSourceRanges:
-  - 79.177.150.184/32  ### used by lab1setup.tf to create yaml file for lab1 
+  - 79.177.150.184/32  
   ports:
     - port: 80
       targetPort: http

@@ -7,7 +7,7 @@ On this step you are going to login to the new tenant1 application, make changes
 Login to the tenant1 application MySQL server:
 
 ```shell
-kubectl exec -it catalog-mysql-0 -n tenant0 -- mysql -u root -pmy-secret-pw
+kubectl exec -it catalog-mysql-0 -n tenant1 -- mysql -u root -pmy-secret-pw
 ```
 Expected output
 ```shell
@@ -89,7 +89,7 @@ Expected output:
 ```
 Verify available catalog images: 
 ```shell
-kubectl exec -n tenant0 --stdin deployment/assets -- bash -c 'ls /usr/share/nginx/html/assets'
+kubectl exec -n tenant1 --stdin deployment/assets -- bash -c 'ls /usr/share/nginx/html/assets'
 ```
 Expected output:
 ```shell

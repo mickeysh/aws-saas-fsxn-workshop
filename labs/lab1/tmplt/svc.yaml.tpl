@@ -17,7 +17,7 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerSourceRanges:
-  - ${loadBalancerSourceRanges}  ### used by lab1setup.tf to create yaml file for lab1 
+  - ${loadBalancerSourceRanges}  
   ports:
     - port: 80
       targetPort: http

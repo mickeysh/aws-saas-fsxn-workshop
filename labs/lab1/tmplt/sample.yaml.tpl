@@ -237,6 +237,9 @@ spec:
               protocol: TCP
       nodeSelector:
         eks.amazonaws.com/nodegroup: ${ng2_name}
+  persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Delete
+      whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -716,6 +719,9 @@ spec:
               protocol: TCP
       nodeSelector:
         eks.amazonaws.com/nodegroup: ${ng2_name}
+  persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Delete
+      whenScaled: Retains
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -768,6 +774,9 @@ spec:
             mountPath: "/var/lib/rabbitmq/mnesia"
       nodeSelector:
         eks.amazonaws.com/nodegroup: ${ng2_name}
+  persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Delete
+      whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
