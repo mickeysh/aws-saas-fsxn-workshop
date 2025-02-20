@@ -32,30 +32,6 @@ resource "aws_iam_policy" "fsxn-csi-policy" {
 }
 
 
-# module "iam_iam-role-for-service-accounts-eks" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-#   version = "5.37.1"
-
-#   role_name              = "AmazonEKS_FSXN_CSI_DriverRole_${random_string.suffix.result}"
-#   allow_self_assume_role = true
-
-#   oidc_providers = {
-#     eks1 = {
-#       provider_arn               = module.eks.oidc_provider_arn
-#       namespace_service_accounts = ["${local.k8s_service_account_namespace}:${local.k8s_service_account_name}"]
-#     }
-#     eks2 = {
-#       provider_arn               = module.eks2.oidc_provider_arn
-#       namespace_service_accounts = ["${local.k8s_service_account_namespace}:${local.k8s_service_account_name}"]
-#     }
-#   }
-
-#   role_policy_arns = {
-#     additional = aws_iam_policy.fsxn-csi-policy.arn
-#   }
-
-# }
-
 locals {
   k8s_service_account_namespace = "trident"
   k8s_service_account_name      = "trident-controller"

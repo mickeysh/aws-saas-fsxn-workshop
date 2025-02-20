@@ -37,12 +37,12 @@ output "fsx-password" {
 
 output "zz_update_kubeconfig_command" {
   # value = "aws eks update-kubeconfig --name " + module.eks.cluster_id
-  value = format("%s %s %s %s", "aws eks update-kubeconfig --name", module.eks.cluster_name, "--region", var.aws_region)
+  value = format("%s %s %s %s", "aws eks update-kubeconfig --name", module.eks.cluster_name, "--alias eks-primary --region", var.aws_region)
 }
 
 output "zz_update_kubeconfig_command2" {
   # value = "aws eks update-kubeconfig --name " + module.eks.cluster_id
-  value = format("%s %s %s %s", "aws eks update-kubeconfig --name", module.eks2.cluster_name, "--region", var.aws_region)
+  value = format("%s %s %s %s", "aws eks update-kubeconfig --name", module.eks2.cluster_name, "--alias eks-dr --region", var.aws_region)
 }
 
 output "cluster_peer_destenation" {

@@ -6,7 +6,7 @@ In this step we are going to Deploy new sample application in tenant1 that is ma
 
 Deploy the UI `loadbalancer` service for the sample application 
 ```shell
-kubectl apply -f ../labs/lab1/svc.yaml -n tenant1
+kubectl apply -f ../labs/lab1/svc_ldb.yaml -n tenant1
 ```
 
 Check the UI `loadbalancer` service was created successfully

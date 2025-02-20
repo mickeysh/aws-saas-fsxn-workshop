@@ -1,5 +1,5 @@
 ## Infrastructure Overview
-Out EKS clusters, FSxN clusters and all netwroking parts (VPCs, Subnets, NAT Gateways etc.) you see in the diagram below were all installed in Lab 0. In this lab we will focus on creating a new tenant on our production cluster and undertand how to create the storage latyer seperation between the different tenants in our EKS cluster. 
+Out EKS clusters, FSxN clusters and all netwroking parts (VPCs, Subnets, NAT Gateways etc.) you see in the diagram below were all installed in Lab 0. 
 
 ![infrastructure architecture](architecture.png)
 
