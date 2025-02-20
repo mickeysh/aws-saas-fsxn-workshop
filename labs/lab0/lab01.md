@@ -12,6 +12,6 @@ This workshop leverages several tools and technologies. The setup.sh script take
 
 Let's run that script now:
 ```bash
-./scripts/setup.sh
+sh ./scripts/setup.sh
 ```
 

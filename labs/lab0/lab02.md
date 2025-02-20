@@ -1,7 +1,7 @@
 ## Create Workshop Infrastructure
 Enter the following into your terminal:
 ```shell
-./scripts/deploy.sh
+sh ./scripts/deploy.sh
 ```
 In the following sections, we'll be using `kubectl` to deploy and manage services. In order for `kubectl` to work, we need to ensure it's configured to talk to our newly deployed EKS clusters. When the script finishes running, it outputs a number of variables to the screen. Two of of which are the commands you use to update our kubeconfig with the information required to connect to our EKS clusters. The output variables are zz_update_kubeconfig_command for the primary cluster and zz_update_kubeconfig_command2 for the DR cluster as seen in the sample below
 > [!IMPORTANT]
