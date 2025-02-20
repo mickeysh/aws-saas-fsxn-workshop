@@ -3,6 +3,12 @@
 * Demonstrate the different ways to isolate tenants working with Labels and Selectors.
 * Mapping deployments to dedicated resources (Isolating backends and EKS nodegroups).
 
+> [!IMPORTANT]
+> This lab is focused on our `eks-primary` cluster so make sure you set the context for kubectl to use that cluster by using the following command:
+> ```shell
+> kubectl config use-context eks-primary
+> ```
+
 ### Step 1 - validate Tenant0 namespace   
 
 ```shell
