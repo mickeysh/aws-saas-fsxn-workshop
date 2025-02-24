@@ -721,7 +721,7 @@ spec:
         eks.amazonaws.com/nodegroup: ${ng2_name}
   persistentVolumeClaimRetentionPolicy:
       whenDeleted: Delete
-      whenScaled: Retains
+      whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: data
