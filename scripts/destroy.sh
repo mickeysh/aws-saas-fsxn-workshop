@@ -19,8 +19,8 @@ kubectl delete ns tenant1 --wait --ignore-not-found
 echo "Delete Lab2 content"
 LAB2_DIR="${LABDIR}/lab2"
 kubectl config use-context eks-primary
-kubectl create -n tenant0 -f ${LAB2_DIR}/volume-snapshot.yaml --wait --ignore-not-found
-kubectl create -n tenant0 -f ${LAB2_DIR}/volume-snapshot-class.yaml --wait --ignore-not-found
+kubectl delete -n tenant0 -f ${LAB2_DIR}/volume-snapshot.yaml --wait --ignore-not-found
+kubectl delete -n tenant0 -f ${LAB2_DIR}/volume-snapshot-class.yaml --wait --ignore-not-found
 
 echo "Delete Lab3 content"
 LAB3_DIR="${LABDIR}/lab3"

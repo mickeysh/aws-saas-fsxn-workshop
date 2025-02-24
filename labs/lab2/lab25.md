@@ -42,7 +42,7 @@ catalog-mysql   0/0     28h
 ### Step 7 - In-place restore from `VolumeSnapshot`
 Run restore in place using [snap-restore.yaml](snap-restore.yaml)
 ```
-kubectl create -f snap-restore.yaml
+kubectl create -f ../labs/lab2/snap-restore.yaml
 ```
 Expected output:
 ```shell

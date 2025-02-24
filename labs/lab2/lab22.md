@@ -9,7 +9,7 @@ We will start by creating the snapshot backup of the catalog service within out 
 ### Step 1 - Create `VolumeSnapshotClass` for `tenant0`.
 Use [volume-snapshot-class.yaml](volume-snapshot-class.yaml) manifset to create a VolumeSnapshotClass:
 ```
-kubectl create -n tenant0 -f volume-snapshot-class.yaml
+kubectl create -n tenant0 -f ../labs/lab2/volume-snapshot-class.yaml
 ```
 Expected output:
 `volumesnapshotclass.snapshot.storage.k8s.io/fsx-snapclass created`
@@ -17,7 +17,7 @@ Expected output:
 ### Step 2 - Create `VolumeSnapshot` on both the catalog DB volume and the assets images volume. 
 Use [volume-snapshot.yaml](volume-snapshot.yaml) to create the snapshots:
 ```
-kubectl create -n tenant0 -f volume-snapshot.yaml
+kubectl create -n tenant0 -f ../labs/lab2/volume-snapshot.yaml
 ```
 Expected output:
 `volumesnapshot.snapshot.storage.k8s.io/data-catalog-mysql-0-snap created
