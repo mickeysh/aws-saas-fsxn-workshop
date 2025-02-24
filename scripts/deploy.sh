@@ -10,7 +10,7 @@ if [ $AWS_EXECUTION_ENV="CloudShell" ]
 then 
     echo "CloudShell detected, setting terraform data directory to /home/.terraform/"
     sudo mkdir -p /home/.terraform/
-    chown -R $USER:$USER /home/.terraform/
+    sudo chown -R $USER:$USER /home/.terraform/
     export TF_DATA_DIR="/home/.terraform/"
 fi
 terraform -chdir=$TFDIR init --upgrade
