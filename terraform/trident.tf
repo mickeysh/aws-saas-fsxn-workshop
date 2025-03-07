@@ -142,15 +142,6 @@ data "http" "ip" {
   url = "https://api.ipify.org"
 }
 
-resource "local_file" "trident_svc_ldb_yaml_lab0" {
-  filename = "${path.module}/../labs/lab0/svc_ldb.yaml"
-  content = templatefile("${path.module}/../manifests/svc.yaml.tpl",
-    {
-      loadBalancerSourceRanges = "${data.http.ip.response_body}/32"
-    }
-  )
-}
-
 resource "kubectl_manifest" "sample_ap_svc_tenant0" {
   provider           = kubectl.cluster1
   override_namespace = "tenant0"

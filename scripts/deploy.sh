@@ -17,3 +17,4 @@ terraform -chdir=$TFDIR init --upgrade
 
 echo "Deploy workshop infrastructure"
 terraform -chdir=$TFDIR apply -auto-approve
+terraform -chdir=$TFDIR output -json > $SCRIPTDIR/output.json

@@ -1,8 +1,8 @@
 resource "aws_fsx_ontap_file_system" "eksfs2" {
-  storage_capacity    = 2048
+  storage_capacity    = 1024
   subnet_ids          = [module.vpc2.private_subnets[0]]
   deployment_type     = "SINGLE_AZ_1"
-  throughput_capacity = 512
+  throughput_capacity = 128
   preferred_subnet_id = module.vpc2.private_subnets[0]
   security_group_ids  = [aws_security_group.fsx_sg2.id]
   fsx_admin_password  = random_string.fsx_password.result
