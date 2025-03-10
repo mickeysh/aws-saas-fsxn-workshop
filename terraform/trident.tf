@@ -153,3 +153,20 @@ resource "kubectl_manifest" "sample_ap_svc_tenant0" {
     }
   )
 }
+
+resource "kubectl_manifest" "peer_cm" {
+  provider           = kubectl.cluster1
+  override_namespace = "trident"
+  wait               = true
+  depends_on         = [kubectl_manifest.sample_app_tenant0 ,helm_release.lb]
+  yaml_body = templatefile("${path.module}/../manifests/peercm.yaml.tpl",
+    {
+      fs_id       = aws_fsx_ontap_file_system.eksfs.id
+      svm_name    = aws_fsx_ontap_storage_virtual_machine.ekssvm.name
+      fs_dr_id    = aws_fsx_ontap_file_system.eksfs2.id
+      svm_dr_name = aws_fsx_ontap_storage_virtual_machine.ekssvm2.name
+      secret_id   = aws_secretsmanager_secret.fsxn_password_secret.id
+      region      = data.aws_region.current.name
+    }
+  )
+}

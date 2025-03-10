@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -uo pipefail
+set -eo pipefail
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TFDIR="$(cd ${SCRIPTDIR}/../terraform; pwd )"
@@ -30,7 +30,8 @@ kubectl delete -f ${LAB3_DIR}/mirrordest.yaml -n tenant0 --wait --ignore-not-fou
 kubectl delete -f ${LAB3_DIR}/pvcdest.yaml -n tenant0 --wait --ignore-not-found
 kubectl config use-context eks-primary
 kubectl delete -f ${LAB3_DIR}/mirrorsource.yaml -n tenant0 --wait --ignore-not-found
-
+kubectl create -f ${LAB3_DIR}/peerjob.yaml -n trident --wait 
+kubectl logs job.batch/peer-clusters -n trident
 
 if [ $AWS_EXECUTION_ENV="CloudShell" ]
 then 
