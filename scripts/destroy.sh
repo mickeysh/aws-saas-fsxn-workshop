@@ -33,12 +33,13 @@ kubectl delete -f ${LAB3_DIR}/mirrorsource.yaml -n tenant0 --wait --ignore-not-f
 kubectl create -f ${LAB3_DIR}/peerjob.yaml -n trident --wait 
 kubectl logs job.batch/peer-clusters -n trident
 
-if [ $AWS_EXECUTION_ENV="CloudShell" ]
+if [ -n "$AWS_EXECUTION_ENV" ] && [ "$AWS_EXECUTION_ENV" = "CloudShell" ]
 then 
     echo "CloudShell detected, setting terraform data directory to /home/.terraform/"
     export TF_DATA_DIR="/home/.terraform/"
 fi
 
+terraform -chdir=$TFDIR init --upgrade
 terraform -chdir=$TFDIR destroy -target="kubectl_manifest.sample_ap_svc_tenant0" -auto-approve
 terraform -chdir=$TFDIR destroy -target="kubectl_manifest.sample_app_tenant0" -auto-approve
 terraform -chdir=$TFDIR destroy -auto-approve

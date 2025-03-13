@@ -6,14 +6,15 @@ metadata:
 data:
   parms.json: |
     {
-        "secretId": "${secret_id}",
         "source": {
             "fsID": "${fs_id}",
-            "svmName": "${svm_name}"
+            "svmName": "${svm_name}",
+            "secretId": "${secret_id}"
         }, 
         "destenation":{
             "fsID": "${fs_dr_id}",
-            "svmName": "${svm_dr_name}"
+            "svmName": "${svm_dr_name}",
+            "secretId": "${secret_id}"
         },
         "cleanup": true,
         "create": false,
