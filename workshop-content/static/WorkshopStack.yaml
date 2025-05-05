@@ -1,0 +1,397 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Workshop Stack with rollback configuration
+
+Parameters:
+  RepoUrl:
+    Type: String
+    Default: https://github.com/mickeysh/aws-saas-fsxn-workshop.git
+    Description: The URL of the repo that the CodeBuild project will clone.
+  RepoBranchName:
+    Type: String
+    Default: main
+    Description: (Optional) The name of the branch that the CodeBuild project will clone.
+  ParticipantRoleArn:
+    Type: String
+    Description: (Optional) The ARN belonging to the role for whom these resources
+      are being created.
+  # ParticipantAssumedRoleArn:
+  #   Type: String
+  #   Description: (Optional) The ARN belonging to the assumed role identity for whom
+  #     these resources are being created.
+  AssetsBucketName:
+    Type: String
+    Default: ''
+    Description: (Optional) The S3 Bucket containing assets for use by this stack or
+      the resources created by it.
+  AssetsBucketPrefix:
+    Type: String
+    Default: ''
+    Description: (Optional) The prefix under which the assets are located. (This
+      should end with a "/".)
+  IsWorkshopStudioEnv:
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'no'
+      - 'yes'
+    Description: (Optional) Whether this stack is being deployed in a Workshop
+      Studio environment or not. If not sure, leave as default of "no".
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join 
+        - '-'
+        - - 'fsxn-wscode'
+          - !Select [2, !Split ["/", !Ref "AWS::StackId"]]
+
+  BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowSpecificPrincipal
+            Effect: Allow
+            Principal:
+              AWS: !Ref ParticipantRoleArn # Replace with your user/role ARN 
+            Action: 's3:*'
+            Resource:   # <-- Fixed syntax for resource ARNs
+              - !GetAtt S3Bucket.Arn
+              - !Join
+                - ''
+                - - !GetAtt S3Bucket.Arn
+                  - '/*'
+          
+          - Sid: AllowCodeBuild
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt WSCodeBuildServiceRole.Arn  # Replace with your CodeBuild role ARN
+            Action: 's3:*'
+            Resource:   # <-- Fixed syntax for resource ARNs
+              - !GetAtt S3Bucket.Arn
+              - !Join
+                - ''
+                - - !GetAtt S3Bucket.Arn
+                  - '/*'
+
+  WSCodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+        Version: '2012-10-17'
+      Description: Workshop Studio CodeBuild Service Role
+      ManagedPolicyArns:
+        - !Join
+          - ''
+          - - 'arn:'
+            - !Ref AWS::Partition
+            - ':iam::aws:policy/AdministratorAccess'
+  CodeBuildTriggerLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: '2012-10-17'
+      Description: role for lambda to trigger codebuild
+      ManagedPolicyArns:
+        - !Ref CodeBuildTriggerLambdaRolePolicy
+  CodeBuildTriggerLambdaRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+              - codebuild:BatchGetBuilds
+              - codebuild:ListBuildsForProject
+            Effect: Allow
+            Resource: !GetAtt InstallWorkshopStack.Arn
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource: !GetAtt TriggerCodeBuildLogGroup.Arn
+        Version: '2012-10-17'
+      Description: role policy for lambda to trigger codebuild
+      Path: /
+  TriggerCodeBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/trigger-codebuild-function
+      RetentionInDays: 7
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: Default encryption (not AWS KMS) used for this sample
+  InstallWorkshopStack:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: install-workshop-stack-codebuild
+      Artifacts:
+        Type: NO_ARTIFACTS 
+      TimeoutInMinutes: 60
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:5.0
+        EnvironmentVariables:
+          - Name: REPO_URL
+            Type: PLAINTEXT
+            Value: !Ref RepoUrl
+          - Name: REPO_BRANCH_NAME
+            Type: PLAINTEXT
+            Value: !Ref RepoBranchName
+          - Name: IS_WORKSHOP_STUDIO_ENV
+            Type: PLAINTEXT
+            Value: !Ref IsWorkshopStudioEnv
+          - Name: PARTICIPANT_ROLE_ARN
+            Type: PLAINTEXT
+            Value: !Ref ParticipantRoleArn
+          - Name: WS_CODE_BUCKET
+            Type: PLAINTEXT
+            Value: !Sub 's3://${S3Bucket}'
+          # - Name: PARTICIPANT_ASSUMED_ROLE_ARN
+          #   Type: PLAINTEXT
+          #   Value: !Ref ParticipantAssumedRoleArn
+          - Name: ASSETS_BUCKET_NAME
+            Type: PLAINTEXT
+            Value: !Ref AssetsBucketName
+          - Name: ASSETS_BUCKET_PREFIX
+            Type: PLAINTEXT
+            Value: !Ref AssetsBucketPrefix
+          - Name: STACK_NAME
+            Value: !Ref 'AWS::StackName'
+          - Name: STACK_ID
+            Value: !Ref 'AWS::StackId'
+          - Name: AWS_REGION
+            Value: !Ref 'AWS::Region'
+            
+      ServiceRole: !GetAtt WSCodeBuildServiceRole.Arn
+      Source:
+        BuildSpec: |-
+          {
+            "version": "0.2",
+            "env": {
+              "shell": "bash",
+              "variables": {
+                "SCRIPTS_DIR": "scripts",
+                "TERRAFORM_LOG": "/tmp/terraform.log"
+              }
+            },
+            "phases": {
+              
+              "build": {
+                "commands": [
+                  "mkdir Lab && cd Lab",
+                  "echo $REPO_BRANCH_NAME $REPO_URL",
+                  "git clone --depth=1 $REPO_URL",
+                  #"aws s3 cp s3://netapp-local-test/SaaS-Workshop/aws-saas-fsxn-workshop.zip .",
+                  #"unzip aws-saas-fsxn-workshop.zip",
+                  #"rm aws-saas-fsxn-workshop.zip",
+                  "echo \"Starting build process with EVENT_REQUEST_TYPE: $EVENT_REQUEST_TYPE\"",
+                  "pwd",
+                  "ls -la",  # Add this to see directory contents
+                  "cd aws-saas-fsxn-workshop",
+                  "if [ ! -d \"scripts\" ]; then echo \"Scripts directory not found\"; exit 1; fi",
+                  "cd scripts",  # Changed from aws-saas-fsxn-workshop/scripts
+                  "# Verify scripts",
+                  "if [ ! -f \"setup.sh\" ] || [ ! -f \"deploy.sh\" ]; then echo \"Required scripts not found\"; exit 1; fi",
+                  "# Make scripts executable",
+                  "chmod +x *.sh",
+                  "git clone --depth=1 https://github.com/tfutils/tfenv.git /root/.tfenv",
+                  "echo 'export PATH=\"/root/.tfenv/bin:$PATH\"' >> ~/.bashrc",
+                  "source ~/.bashrc",
+                  "ln -s /root/.tfenv/bin/* /usr/local/bin",
+                  "tfenv install 1.5.0",
+                  "tfenv use 1.5.0",
+                  "# Verify Terraform installation",
+                  "terraform --version",
+                  "# Execute setup.sh",
+                  "echo \"Running setup script...\"",
+                  "if ./setup.sh; then echo \"Setup completed successfully\"; else echo \"Setup failed\"; exit 1; fi",
+                  "  # Run deployment with Terraform validation",
+                  "echo \"Running deployment script...\"",
+                  "export TERRAFORM_OUTPUT_CAPTURE=true",
+                  "if ./deploy.sh 2>&1 | tee $TERRAFORM_LOG; then echo \"Deployment successful\"; if grep -q 'Apply complete!' $TERRAFORM_LOG; then echo \"Terraform apply completed successfully\"; if grep -q 'Error:' $TERRAFORM_LOG; then echo \"Warning: Errors found in Terraform log despite successful apply\"; exit 1; fi; else echo \"Terraform apply failed or incomplete\"; exit 1; fi; else echo \"Deployment script failed\"; echo \"Terraform log:\"; cat $TERRAFORM_LOG; exit 1; fi"
+                ]
+              },
+              "post_build": {
+                
+                    "commands": [
+                      "echo $PARTICIPANT_ROLE_ARN",
+                      "cd ..",
+                      "echo \"Copying workshop code to S3\"",
+                      "aws s3 cp labs/lab1/ $WS_CODE_BUCKET/lab1 --recursive --exclude \"*\" --include \"*.yaml\"",
+                      "aws s3 cp labs/lab2/ $WS_CODE_BUCKET/lab2 --recursive --exclude \"*\" --include \"*.yaml\"",
+                      "aws s3 cp labs/lab3/ $WS_CODE_BUCKET/lab3 --recursive --exclude \"*\" --include \"*.yaml\"",
+                      "CLUSTERS=$(aws eks list-clusters --query 'clusters[]' --output text)",
+                      "for CLUSTER_NAME in $CLUSTERS; do \
+                          aws eks create-access-entry --cli-input-json \"{\\\"clusterName\\\": \\\"$CLUSTER_NAME\\\", \\\"principalArn\\\": \\\"$PARTICIPANT_ROLE_ARN\\\"}\"; \
+                          aws eks associate-access-policy --cli-input-json \"{\\\"clusterName\\\": \\\"$CLUSTER_NAME\\\", \\\"principalArn\\\": \\\"$PARTICIPANT_ROLE_ARN\\\", \\\"accessScope\\\": {\\\"type\\\": \\\"cluster\\\"}, \\\"policyArn\\\": \\\"arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy\\\"}\"; \
+                         
+                      done",
+                      
+                      "STATUS=\"FAILED\"; if [ \"$CODEBUILD_BUILD_SUCCEEDING\" == \"1\" ]; then if [ -f \"$TERRAFORM_LOG\" ]; then if grep -q 'Apply complete!' \"$TERRAFORM_LOG\"; then STATUS=\"SUCCESS\"; echo \"Build and Terraform apply succeeded\"; else echo \"Terraform apply completion message not found in logs\"; fi; else echo \"Terraform log file not found\"; fi; else echo \"Build failed before reaching Terraform apply\"; fi; if [ \"$STATUS\" == \"SUCCESS\" ]; then curl -X PUT --data-binary '{\"Status\": \"SUCCESS\", \"Reason\": \"Configuration Complete\", \"PhysicalResourceId\": \"static\", \"StackId\": \"'$EVENT_STACK_ID'\", \"RequestId\": \"'$EVENT_REQUEST_ID'\", \"LogicalResourceId\": \"'$EVENT_LOGICAL_RESOURCE_ID'\"}' \"$EVENT_RESPONSE_URL\"; else curl -X PUT --data-binary '{\"Status\": \"FAILED\", \"Reason\": \"Configuration Failed\", \"PhysicalResourceId\": \"static\", \"StackId\": \"'$EVENT_STACK_ID'\", \"RequestId\": \"'$EVENT_REQUEST_ID'\", \"LogicalResourceId\": \"'$EVENT_LOGICAL_RESOURCE_ID'\"}' \"$EVENT_RESPONSE_URL\"; fi"
+                  ]
+
+              }
+            }
+          }
+        Type: NO_SOURCE
+
+  TriggerCodeBuild:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.lambda_handler
+      Role: !GetAtt CodeBuildTriggerLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import time
+          import os
+          import urllib3
+
+          def send_response(event, context, response_status, reason=None, physical_resource_id=None):
+              http = urllib3.PoolManager()
+
+              response_data = {
+                  'Status': response_status,
+                  'Reason': reason or 'See CloudWatch Logs',
+                  'PhysicalResourceId': physical_resource_id or context.log_stream_name,
+                  'StackId': event['StackId'],
+                  'RequestId': event['RequestId'],
+                  'LogicalResourceId': event['LogicalResourceId'],
+                  'NoEcho': False,
+                  'Data': {}
+              }
+
+              try:
+                  response_body = json.dumps(response_data)
+                  headers = {
+                      'Content-Type': 'application/json',
+                      'Content-Length': str(len(response_body))
+                  }
+
+                  http.request(
+                      'PUT',
+                      event['ResponseURL'],
+                      body=response_body,
+                      headers=headers,
+                      retries=False
+                  )
+                  print(f"Successfully sent response to CloudFormation: {response_status}")
+              except Exception as e:
+                  print(f"Failed to send response to CloudFormation: {str(e)}")
+
+          def lambda_handler(event, context):
+              print(f"Received event: {json.dumps(event)}")
+
+              # Handle delete event immediately
+              if event['RequestType'] == 'Delete':
+                  send_response(event, context, 'SUCCESS')
+                  return
+
+              try:
+                  codebuild = boto3.client('codebuild')
+                  request_token = event['RequestId'] 
+                  
+                  existing_builds = codebuild.list_builds_for_project(
+                      projectName=os.environ['PROJECT_NAME']
+                  )['ids']
+
+                  for build_id in existing_builds:
+                      build = codebuild.batch_get_builds(ids=[build_id])['builds'][0]
+                      if build.get('idempotencyToken') == request_token:
+                          print(f"Build already in progress with request token: {request_token}")
+                          return monitor_build(codebuild, build_id, event, context)
+                  
+                  # Start the build
+                  response = codebuild.start_build(
+                      projectName=os.environ['PROJECT_NAME'],
+                      environmentVariablesOverride=[
+                          {'name': 'EVENT_RESPONSE_URL', 'value': event['ResponseURL']},
+                          {'name': 'EVENT_REQUEST_TYPE', 'value': event['RequestType']},
+                          {'name': 'EVENT_STACK_ID', 'value': event['StackId']},
+                          {'name': 'EVENT_REQUEST_ID', 'value': event['RequestId']},
+                          {'name': 'EVENT_LOGICAL_RESOURCE_ID', 'value': event['LogicalResourceId']}
+                      ],
+                      idempotencyToken=request_token
+                  )
+                  return monitor_build(codebuild, response['build']['id'], event, context)
+
+              except Exception as e:
+                  print(f"Exception during build: {str(e)}")
+                  send_response(event, context, 'FAILED', reason=str(e))
+                  return
+
+          def monitor_build(codebuild, build_id, event, context):
+              max_attempts = 8  # 10 minutes (60 * 10 seconds)
+              attempts = 0
+              try:
+                  while attempts < max_attempts:
+                      build_status = codebuild.batch_get_builds(ids=[build_id])['builds'][0]
+                      status = build_status['buildStatus']
+                      print(f"Current build status: {status}")
+
+                      if status == 'SUCCEEDED':
+                          print("Build succeeded")
+                          send_response(event, context, 'SUCCESS')
+                          return {'Status': 'SUCCESS'} 
+                      elif status in ['FAILED', 'STOPPED', 'TIMED_OUT']:
+                          error_msg = f"Build failed with status: {status}"
+                          print(error_msg)
+                          send_response(event, context, 'FAILED', reason=error_msg)
+                          return
+
+                      attempts += 1
+                      time.sleep(300)
+
+                  # If we get here, we timed out waiting for the build
+                  error_msg = "Timed out waiting for build completion"
+                  print(error_msg)
+                  send_response(event, context, 'FAILED', reason=error_msg)
+
+              except Exception as e:
+                  error_msg = f"Exception during build: {str(e)}"
+                  print(error_msg)
+                  send_response(event, context, 'FAILED', reason=error_msg)
+                  return
+
+      Runtime: python3.11
+      Environment:
+        Variables:
+          PROJECT_NAME: !Ref InstallWorkshopStack
+
+  CustomProvisioningResource:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt TriggerCodeBuild.Arn
+      OnFailure:
+        Result: ROLLBACK
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT45M  # 30 minute timeout
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+
+#write codebuild project to clone repo and dthen CD to script folder and exectue a sript

@@ -1,0 +1,12 @@
+---
+chapter: true
+title: Introduction
+weight: 4
+---
+Running applications in a software-as-a-service (SaaS) delivery model on Kubernetes (K8s) is a very common choice, becuase of several constucts that are built into to this platform like scaling, resource handling and security that address the SaaS needs. When architecting a SaaS application to run on AWS, choosing [Amazon EKS](https://aws.amazon.com/pm/eks/?trk=95db30c5-8506-4271-948a-5fa4694b61c9&sc_channel=ps&ef_id=Cj0KCQjwoNzABhDbARIsALfY8VPFp6fN-u2mIepdlfDxVLTQkYdFtFPmgCwI5EZJlqrkkf53U3h7yVgaAsZHEALw_wcB:G:s&s_kwcid=AL!4422!3!717563061585!e!!g!!amazon%20eks!21818515084!169838282878&gad_campaignid=21818515084&gbraid=0AAAAADjHtp_ACjldawY1bzvWAw4p7zOjN&gclid=Cj0KCQjwoNzABhDbARIsALfY8VPFp6fN-u2mIepdlfDxVLTQkYdFtFPmgCwI5EZJlqrkkf53U3h7yVgaAsZHEALw_wcB) as the K8s provider is very common, because it is built on top of these K8s constructs, but is also intergrated with AWS services like IAM for securtiy and VPC for networking. One of the constucts in the SaaS application that requires a unique focus is storage and data management. Amazon EKS uses the basic K8s storage primitives and offloads the spesific data manangement values and feature to the different AWS storage services through the Container Storage Interface (CSI) drivers. 
+
+[Amazon FSx for NetApp ONTAP (FSxN)](https://aws.amazon.com/fsx/netapp-ontap/) is a storage service that is built with very spesific and unique values for SaaS applications. Capabilities like multi-tenant storage partitioning and access, snapshots and clones, remote cross region replication, which are all tightly integrated with Amazon EKS through the NetApp Trident CSI driver.
+
+We have created this workshop to help guide developers and architects through a series of labs that will explore differnt storage and data management challanges in a multi-tenant solution built on EKS. We'll review some of the architectural and design best practices that are associated with this solution as we go.
+
+In each section that follows we’ll explore, step-by-step, a storage challange in a multi-tenant EKS environment, including tenant isolation, data protection, and disaster recovery and buisness continuity and specifically how these are implemented using Amazon FSx for ONTAP in EKS. Once you complete this workshop, you'll have a better understanding of how to implement all these in your own environemt and apply these values to your SaaS application.
