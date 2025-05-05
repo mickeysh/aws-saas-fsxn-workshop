@@ -150,11 +150,12 @@ resource "kubectl_manifest" "sample_ap_svc_tenant0" {
   yaml_body = templatefile("${path.module}/../manifests/svc.yaml.tpl",
     {
       loadBalancerSourceRanges = "${data.http.ip.response_body}/32"
+      acmCertificateArn = aws_acm_certificate.alb_acm_cert.arn
     }
   )
 }
 
-resource "kubectl_manifest" "peer_cm" {
+resource "kubectl_manifest" "peer_delete" {
   provider           = kubectl.cluster1
   override_namespace = "trident"
   wait               = true
@@ -167,6 +168,27 @@ resource "kubectl_manifest" "peer_cm" {
       svm_dr_name = aws_fsx_ontap_storage_virtual_machine.ekssvm2.name
       secret_id   = aws_secretsmanager_secret.fsxn_password_secret.id
       region      = data.aws_region.current.name
+      peer_create = "false"
+      peer_name   = "peer-delete"
+    }
+  )
+}
+
+resource "kubectl_manifest" "peer_create" {
+  provider           = kubectl.cluster1
+  override_namespace = "trident"
+  wait               = true
+  depends_on         = [kubectl_manifest.sample_app_tenant0 ,helm_release.lb]
+  yaml_body = templatefile("${path.module}/../manifests/peercm.yaml.tpl",
+    {
+      fs_id       = aws_fsx_ontap_file_system.eksfs.id
+      svm_name    = aws_fsx_ontap_storage_virtual_machine.ekssvm.name
+      fs_dr_id    = aws_fsx_ontap_file_system.eksfs2.id
+      svm_dr_name = aws_fsx_ontap_storage_virtual_machine.ekssvm2.name
+      secret_id   = aws_secretsmanager_secret.fsxn_password_secret.id
+      region      = data.aws_region.current.name
+      peer_create = "true"
+      peer_name   = "peer-create"
     }
   )
 }

@@ -29,6 +29,12 @@ resource "aws_fsx_ontap_storage_virtual_machine" "ekssvm" {
   svm_admin_password = random_string.fsx_password.result
 }
 
+resource "aws_fsx_ontap_storage_virtual_machine" "ekssvmt2" {
+  file_system_id     = aws_fsx_ontap_file_system.eksfs.id
+  name               = "ekssvmt2"
+  svm_admin_password = random_string.fsx_password.result
+}
+
 resource "aws_security_group" "fsx_sg" {
   name_prefix = "security group for fsx access"
   vpc_id      = module.vpc.vpc_id

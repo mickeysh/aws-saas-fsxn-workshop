@@ -9,11 +9,23 @@ resource "local_file" "trident_backendns_yaml_lab1" {
   )
 }
 
+resource "local_file" "trident_backend_config_svm" {
+  filename = "${path.module}/../labs/lab1/backendsvm.yaml"
+  content = templatefile("${path.module}/../labs/lab1/tmplt/backendsvm.yaml.tpl",
+    {
+      fs_id      = aws_fsx_ontap_file_system.eksfs.id
+      fs_svm     = aws_fsx_ontap_storage_virtual_machine.ekssvmt2.name
+      secret_arn = aws_secretsmanager_secret.fsxn_password_secret.arn
+    }
+  )
+}
+
 resource "local_file" "trident_svc_ldb_yaml_lab1" {
   filename = "${path.module}/../labs/lab1/svc_ldb.yaml"
   content = templatefile("${path.module}/../labs/lab1/tmplt/svc.yaml.tpl",
     {
       loadBalancerSourceRanges = "${data.http.ip.response_body}/32"
+      acmCertificateArn = aws_acm_certificate.alb_acm_cert.arn
     }
   )
 }

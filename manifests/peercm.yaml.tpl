@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: peer-parms
+  name: ${peer_name}
   namespace: trident
 data:
   parms.json: |
@@ -17,6 +17,6 @@ data:
             "secretId": "${secret_id}"
         },
         "cleanup": true,
-        "create": false,
+        "create": ${peer_create},
         "region": "${region}"
     }

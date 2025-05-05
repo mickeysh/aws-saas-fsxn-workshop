@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: peer-clusters
+  name: peer-clusters-delete
   namespace: trident
 spec:
   template:
@@ -9,7 +9,7 @@ spec:
       serviceAccountName: trident-controller
       containers:
       - name: python
-        image: 139763910815.dkr.ecr.us-east-1.amazonaws.com/fsxn/ontap-peer:latest
+        image: public.ecr.aws/netapp-innovation/fsxn/ontap-peering:latest
         volumeMounts:
           - name: parms
             mountPath: /usr/src/app/parms
@@ -17,4 +17,4 @@ spec:
       volumes:
         - name: parms
           configMap:
-            name: peer-parms
+            name: peer-delete

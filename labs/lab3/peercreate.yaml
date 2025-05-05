@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: peer-clusters-create
+  namespace: trident
+spec:
+  template:
+    spec:
+      serviceAccountName: trident-controller
+      containers:
+      - name: python
+        image: public.ecr.aws/netapp-innovation/fsxn/ontap-peering:latest
+        volumeMounts:
+          - name: parms
+            mountPath: /usr/src/app/parms
+      restartPolicy: Never
+      volumes:
+        - name: parms
+          configMap:
+            name: peer-create
