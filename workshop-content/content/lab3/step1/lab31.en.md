@@ -22,19 +22,10 @@ Run the job using `peercreate.yaml` sample file:
 kubectl apply -f ../labs/lab3/peercreate.yaml
 :::
 
-You can verify the process by checking the output of the job. You'll need to get the pod id first:
+You can verify the process by checking the output of the job:
 :::code{showCopyAction=true showLineNumbers=false language=shell}
-kubectl get pods -l job-name=peer-clusters-create -n trident
+kubectl logs job.batch/peer-clusters-create -n trident
 :::
-Expected output:
-:::code{showCopyAction=false showLineNumbers=false language=shell}
-NAME                         READY   STATUS      RESTARTS   AGE
-peer-clusters-create-nb2cs   0/1     Completed   0          54m
-::::
-And then query the Pod's logs:
-:::code{showCopyAction=true showLineNumbers=false language=shell}
-kubectl logs -n trident peer-clusters-create-nb2cs
-::::
 
 Expected output: 
 :::code{showCopyAction=false showLineNumbers=false language=shell}

@@ -30,8 +30,10 @@ kubectl delete -f ${LAB3_DIR}/mirrordest.yaml -n tenant0 --wait --ignore-not-fou
 kubectl delete -f ${LAB3_DIR}/pvcdest.yaml -n tenant0 --wait --ignore-not-found
 kubectl config use-context eks-primary
 kubectl delete -f ${LAB3_DIR}/mirrorsource.yaml -n tenant0 --wait --ignore-not-found
-kubectl create -f ${LAB3_DIR}/peerdelete.yaml -n trident --wait 
-kubectl logs job.batch/peer-clusters -n trident
+kubectl delete -f ${LAB3_DIR}/peerdelete.yaml -n trident --wait --ignore-not-found
+kubectl create -f ${LAB3_DIR}/peerdelete.yaml -n trident
+sleep 30
+kubectl logs job.batch/peer-clusters-delete -n trident
 
 if [ -n "$AWS_EXECUTION_ENV" ] && [ "$AWS_EXECUTION_ENV" = "CloudShell" ]
 then 
