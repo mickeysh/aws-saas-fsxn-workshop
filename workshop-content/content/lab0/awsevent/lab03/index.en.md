@@ -49,6 +49,8 @@ Expected output:
 NAME   TYPE           CLUSTER-IP      EXTERNAL-IP                                                          PORT(S)        AGE
 ui     LoadBalancer   172.20.254.36   saas-fsxn-workshop-ui-de66fe501cfbfd0a.elb.us-east-1.amazonaws.com   80:30278/TCP   70m
 ```
-
+::::alert{type="warning" header="Security Group changes"}
+The workshop setup script automatically adds your host publicIP addess to the loadBalancer sercurity group rules (using [ipify tool](https://api.ipify.org)). If you need to access the UI from a browser located on another host make sure you add your publicIP address to the loadBalancer sercurity group rules before access. 
+::::
 Try to login to the sample application from the web browser:
 ![sample application](/static/image.png)

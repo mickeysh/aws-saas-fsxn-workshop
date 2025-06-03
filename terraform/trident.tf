@@ -116,7 +116,7 @@ resource "kubectl_manifest" "trident_storage_class2_san" {
   yaml_body  = file("${path.module}/../manifests/storageclasssan.yaml")
 }
 
-resource "kubernetes_namespace_v1" "tenant0" {
+resource "kubernetes_namespace_v1" "cluster1_tenant0" {
   provider = kubernetes.cluster1
   metadata {
     name = "tenant0"
@@ -124,6 +124,16 @@ resource "kubernetes_namespace_v1" "tenant0" {
 
   depends_on = [module.eks]
 }
+
+resource "kubernetes_namespace_v1" "cluster2_tenant0" {
+  provider = kubernetes.cluster2
+  metadata {
+    name = "tenant0"
+  }
+
+  depends_on = [module.eks2]
+}
+
 
 data "kubectl_path_documents" "sample_app_tenant0" {
   pattern = "../manifests/sample.yaml"
