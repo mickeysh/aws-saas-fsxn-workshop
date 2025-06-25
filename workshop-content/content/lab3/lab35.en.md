@@ -6,7 +6,7 @@ weight : 86
 #### Deploy and test sample application with replicated data
 Deploy the Application on the DR site:
 :::code{showCopyAction=true showLineNumbers=false language=shell}
-kubectl create -f sample.yaml
+kubectl create -f sample.yaml -n tenant0
 :::
 Expected output:
 :::code{showCopyAction=false showLineNumbers=false language=shell}

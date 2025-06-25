@@ -12,7 +12,7 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.84.0"
+      version = "~> 5.84.0"
     }
     local = {
       source  = "hashicorp/local"
@@ -28,7 +28,7 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.17.0"
+      version = "~> 2.17.0"
     }
     kubectl = {
       source  = "alekc/kubectl"
