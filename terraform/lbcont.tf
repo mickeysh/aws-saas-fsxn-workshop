@@ -31,25 +31,24 @@ resource "helm_release" "lb" {
     aws_eks_pod_identity_association.aws-lb-pod-identity-association1
   ]
 
-  set {
+  set = [
+    {
     name  = "serviceAccount.create"
     value = "true"
-  }
-
-  set {
+    },
+    {
     name  = "serviceAccount.name"
     value = "aws-load-balancer-controller"
-  }
-
-  set {
+    },
+    {
     name  = "clusterName"
     value = module.eks.cluster_name
-  }
-
-  set {
+    },
+    {
     name  = "disableRestrictedSecurityGroupRules"
     value = "true"
-  }
+    }
+  ]
 }
 
 resource "helm_release" "lb2" {
@@ -63,23 +62,22 @@ resource "helm_release" "lb2" {
     aws_eks_pod_identity_association.aws-lb-pod-identity-association2
   ]
 
-  set {
+  set = [
+    {
     name  = "serviceAccount.create"
     value = "true"
-  }
-
-  set {
+    },
+    {
     name  = "serviceAccount.name"
     value = "aws-load-balancer-controller"
-  }
-
-  set {
+    },
+    {
     name  = "clusterName"
     value = module.eks2.cluster_name
-  }
-
-  set {
+    },
+    {
     name  = "disableRestrictedSecurityGroupRules"
     value = "true"
-  }
+    }
+  ]
 }

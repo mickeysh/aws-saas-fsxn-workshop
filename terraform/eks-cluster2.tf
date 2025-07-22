@@ -1,6 +1,6 @@
 module "eks2" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "20.33.1"
+  version         = "20.37.1"
   cluster_name    = local.cluster2_name
   cluster_version = var.kubernetes_version
   subnet_ids      = module.vpc2.private_subnets

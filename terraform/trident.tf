@@ -10,10 +10,11 @@ resource "helm_release" "trident" {
   repository       = "https://netapp.github.io/trident-helm-chart"
   values           = [file("${path.module}/values.yaml")]
 
-  set {
+  set = [{
     name  = "nodePrep"
     value = "{iscsi}"
   }
+  ]
 
   depends_on = [module.eks]
 }
@@ -72,10 +73,11 @@ resource "helm_release" "trident2" {
   repository       = "https://netapp.github.io/trident-helm-chart"
   values           = [file("${path.module}/values.yaml")]
 
-  set {
+  set = [{
     name  = "nodePrep"
     value = "{iscsi}"
   }
+  ]
 
   depends_on = [module.eks2]
 }

@@ -8,19 +8,19 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">=2.35.1"
+      version = ">=2.37.1"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.84.0"
+      version = ">= 5.84.0"
     }
     local = {
       source  = "hashicorp/local"
-      version = "~> 2.5.2"
+      version = "~> 2.5.3"
     }
     null = {
       source  = "hashicorp/null"
-      version = "~> 3.2.3"
+      version = "~> 3.2.4"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
@@ -28,7 +28,7 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.17.0"
+      version = ">= 2.17.0"
     }
     kubectl = {
       source  = "alekc/kubectl"
@@ -36,7 +36,7 @@ terraform {
     }
     time = {
       source  = "hashicorp/time"
-      version = "0.12.1"
+      version = "0.13.1"
     }
   }
 }
